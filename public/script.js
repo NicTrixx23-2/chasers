@@ -1,67 +1,34 @@
-const express = require("express");
-const app = express();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+const socket = io();
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 
-const PORT = process.env.PORT || 3000;
-app.use(express.static("public"));
+// Licht
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(20, 20, 20);
+scene.add(light);
 
-let players = {};
-let chaserId = null;
+// Boden
+const groundGeo = new THREE.PlaneGeometry(100, 100);
+const groundMat = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+const ground = new THREE.Mesh(groundGeo, groundMat);
+ground.rotation.x = -Math.PI / 2;
+scene.add(ground);
 
-io.on("connection", (socket) => {
-  console.log("Player connected:", socket.id);
-  players[socket.id] = { x: 0, z: 0, isChaser: false };
+// Map Objekte
+function addBox(x, z, color = 0x808080, scale = [2, 2, 2]) {
+  const geo = new THREE.BoxGeometry(...scale);
+  const mat = new THREE.MeshStandardMaterial({ color });
+  const box = new THREE.Mesh(geo, mat);
+  box.position.set(x, scale[1] / 2, z);
+  scene.add(box);
+}
 
-  if (Object.keys(players).length === 1) {
-    chaserId = socket.id;
-    players[socket.id].isChaser = true;
-  }
-
-  io.emit("updatePlayers", players);
-
-  socket.on("playerMove", (data) => {
-    if (players[socket.id]) {
-      players[socket.id].x = data.x;
-      players[socket.id].z = data.z;
-
-      // Catching logic
-      if (players[socket.id].isChaser) {
-        for (const id in players) {
-          if (id !== socket.id) {
-            const dx = players[id].x - data.x;
-            const dz = players[id].z - data.z;
-            const dist = Math.sqrt(dx * dx + dz * dz);
-            if (dist < 1.5) {
-              players[socket.id].isChaser = false;
-              players[id].isChaser = true;
-              chaserId = id;
-              break;
-            }
-          }
-        }
-      }
-
-      io.emit("updatePlayers", players);
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Player disconnected:", socket.id);
-    delete players[socket.id];
-
-    if (socket.id === chaserId) {
-      const remaining = Object.keys(players);
-      if (remaining.length > 0) {
-        chaserId = remaining[0];
-        players[chaserId].isChaser = true;
-      }
-    }
-
-    io.emit("updatePlayers", players);
-  });
-});
-
-http.listen(PORT, () => {
-  console.log("Server listening on port", PORT);
-});
+function generateMap() {
+  addBox(-15, -15, 0x8B4513, [4, 4, 4]);
+  addBox(15, -10, 0x8B4513, [5, 5, 5]);
+  addBox(-20, 20, 0x8B4513, [3, 3, 3]);
+  addBox(0, -20, 0xA9A9A9, [2, 1, 2]);
+  addBox(10, 15, 0xA9A9A9, [1.
