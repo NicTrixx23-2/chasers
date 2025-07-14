@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Chase Game</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #touchControls, #cameraSwitch {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+    }
+    #cameraSwitch {
+      bottom: 80px;
+    }
+    .btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      border: 2px solid #000;
+      font-size: 30px;
+      text-align: center;
+      line-height: 60px;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="cameraSwitch">
+    <div class="btn" id="switchCam">🎥</div>
+  </div>
+  <div id="touchControls">
+    <div class="btn" id="left">←</div>
+    <div class="btn" id="up">↑</div>
+    <div class="btn" id="down">↓</div>
+    <div class="btn" id="right">→</div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
