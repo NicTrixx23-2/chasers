@@ -1,21 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Chase Game</title>
+  <meta charset="UTF-8" />
+  <title>Multiplayer Chase Game</title>
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
-    #touchControls, #cameraSwitch {
+
+    #joystickWrapper {
       position: absolute;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 10px;
+      bottom: 20px;
+      left: 20px;
+      width: 100px;
+      height: 100px;
     }
+
     #cameraSwitch {
-      bottom: 80px;
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
     }
+
     .btn {
       width: 60px;
       height: 60px;
@@ -33,14 +38,11 @@
   <div id="cameraSwitch">
     <div class="btn" id="switchCam">🎥</div>
   </div>
-  <div id="touchControls">
-    <div class="btn" id="left">←</div>
-    <div class="btn" id="up">↑</div>
-    <div class="btn" id="down">↓</div>
-    <div class="btn" id="right">→</div>
-  </div>
+  <div id="joystickWrapper"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
